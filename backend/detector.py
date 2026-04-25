@@ -8,10 +8,8 @@ from deepface import DeepFace
 # Disable TensorFlow logging spam
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
-# 'yolov8n.pt' is the nano (smallest, fastest) variant.
 model = YOLO("yolov8n.pt")
 
-# Colors for bounding boxes (BGR format)
 COLORS = [
     (255, 100, 100), (100, 255, 100), (100, 100, 255),
     (255, 255, 100), (255, 100, 255), (100, 255, 255),
@@ -26,7 +24,7 @@ def detect_objects(image_bytes: bytes, confidence_threshold: float = 0.4) -> dic
     if image is None:
         raise ValueError("Could not decode image.")
     
-    img_height, img_width = image.shape[:2]
+    img_h, img_w = image.shape[:2]
     results = model(image, conf=confidence_threshold, verbose=False)
     
     detections = []
@@ -66,46 +64,51 @@ def detect_objects(image_bytes: bytes, confidence_threshold: float = 0.4) -> dic
 def _analyze_expression(image, x1, y1, x2, y2):
     try:
         h, w = image.shape[:2]
-        pad = 20
-        face_img = image[max(0, y1-pad):min(h, y2+pad), max(0, x1-pad):min(w, x2+pad)]
-        # analyze emotion
+        face_img = image[max(0, y1):min(h, y2), max(0, x1):min(w, x2)]
+        # We only analyze a small crop to save speed
         analysis = DeepFace.analyze(face_img, actions=['emotion'], enforce_detection=False, silent=True)
         return analysis[0]['dominant_emotion']
     except:
         return None
 
 def _draw_boxes(image, detections):
+    img_h, img_w = image.shape[:2]
     for det in detections:
         x1, y1, x2, y2 = det['bbox']['x1'], det['bbox']['y1'], det['bbox']['x2'], det['bbox']['y2']
         color = COLORS[hash(det['class']) % len(COLORS)]
         
-        # Thicker bounding box
-        cv2.rectangle(image, (x1, y1), (x2, y2), color, 3)
+        # Thinner Bounding Box
+        cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
         
-        # Prepare the label
+        # Label String
         label = f"{det['class']}"
         if det['expression']: label += f" | {det['expression']}"
         label += f" {det['confidence_percent']}"
         
-        # Larger font and more padding for the label box
-        font_scale = 0.6
-        thickness = 2
+        # Very Small Elegant Font
+        font_scale = 0.35
+        thickness = 1
         (tw, th), bl = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, font_scale, thickness)
         
-        # The background rectangle for the label (Now bigger and offset slightly)
-        cv2.rectangle(image, (x1, y1 - th - 15), (x1 + tw + 10, y1), color, -1)
+        # BOUNDARY PROTECTION: If label goes off top, move it inside the box
+        label_y = y1 - 8
+        if label_y - th < 0:
+            label_y = y1 + th + 8
+            
+        # Draw Label Background
+        cv2.rectangle(image, (x1, label_y - th - 5), (x1 + tw + 6, label_y + 2), color, -1)
         
-        # Drawing the text with high contrast (white or black depending on brightness)
-        cv2.putText(image, label, (x1 + 5, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, font_scale, (255, 255, 255), thickness)
+        # Draw Text
+        cv2.putText(image, label, (x1 + 3, label_y), cv2.FONT_HERSHEY_SIMPLEX, font_scale, (255, 255, 255), thickness)
+        
     return image
 
 def _generate_summary(detections):
     humans = [d for d in detections if d["class"] == "person"]
     count = len(humans)
     exprs = [h["expression"] for h in humans if h["expression"]]
-    
     msg = f"I found **{len(detections)} objects**."
     if count > 0:
-        msg += f" I see **{count} human(s)**."
-        if exprs: msg += f" Expressions detected: **{', '.join(set(exprs))}**."
+        msg += f" {count} human(s) detected."
+        if exprs: msg += f" Expressions: {', '.join(set(exprs))}."
     return msg

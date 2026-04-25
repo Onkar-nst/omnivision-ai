@@ -23,14 +23,25 @@ const LiveCamera = ({ onFrame, confidence }) => {
     if (isLive) {
       interval = setInterval(() => {
         capture();
-      }, 300); 
+      }, 800); 
     }
     return () => clearInterval(interval);
   }, [isLive, capture]);
 
   return (
     <div className="live-camera-container">
-      <div className="image-panel" style={{ position: 'relative', maxWidth: '480px', margin: '0 auto', background: '#000', borderRadius: '14px', overflow: 'hidden' }}>
+      <div 
+        className="image-panel" 
+        style={{ 
+          position: 'relative', 
+          maxWidth: isLive ? '240px' : '480px', // Shrinks to 50% when live
+          margin: '0 auto', 
+          background: '#000', 
+          borderRadius: '14px', 
+          overflow: 'hidden',
+          transition: 'max-width 0.4s ease-in-out' // Smooth transition
+        }}
+      >
         <div className="panel-header" style={{ background: '#f9fafb', padding: '10px 15px', display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-secondary)', fontSize: '13px' }}>
           <div className="panel-dot" style={{ width: '8px', height: '8px', borderRadius: '50%', background: isLive ? '#10b981' : '#6b7280' }} />
           {isLive ? 'LIVE STREAM ACTIVE' : 'CAMERA READY'}

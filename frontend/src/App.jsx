@@ -1,8 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import UploadZone from './components/UploadZone';
 import LoadingView from './components/LoadingView';
 import ResultPanel from './components/ResultPanel';
-import LiveCamera from './components/LiveCamera'; // Re-adding the import
+import LiveCamera from './components/LiveCamera'; 
 import './index.css';
 
 const API_URL = 'http://localhost:8000';
@@ -16,13 +16,33 @@ const STATE = {
 
 function App() {
   const [appState, setAppState]           = useState(STATE.IDLE);
-  const [mode, setMode]                   = useState('upload'); // 'upload' or 'live'
+  const [mode, setMode]                   = useState('upload'); 
   const [result, setResult]               = useState(null);
   const [originalPreview, setOriginalPreview] = useState(null);
   const [errorMessage, setErrorMessage]   = useState('');
   const [confidence, setConfidence]       = useState(0.4);
+  const [hasScrolled, setHasScrolled]     = useState(false);
+  
+  // Use a Ref to track processing status (prevents lag/backlog)
+  const isProcessing = useRef(false);
+
+  // NEW: Auto-scroll ONLY ONCE when results first arrive
+  useEffect(() => {
+    if (result && !hasScrolled) {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth'
+      });
+      setHasScrolled(true);
+    }
+  }, [result, hasScrolled]);
 
   const handleImageSelect = useCallback(async (file, previewUrl = null) => {
+    // If we are already thinking, skip this frame to prevent lag
+    if (mode === 'live' && isProcessing.current) return;
+    
+    isProcessing.current = true; // Block further requests
+    
     if (previewUrl) setOriginalPreview(previewUrl);
     if (mode === 'upload') setAppState(STATE.LOADING);
     
@@ -52,6 +72,8 @@ function App() {
         setErrorMessage(err.message || 'Unknown error occurred');
         setAppState(STATE.ERROR);
       }
+    } finally {
+      isProcessing.current = false; // Unlock for next frame
     }
   }, [confidence, mode]);
 
@@ -61,6 +83,7 @@ function App() {
     if (originalPreview) URL.revokeObjectURL(originalPreview);
     setOriginalPreview(null);
     setErrorMessage('');
+    setHasScrolled(false); // Reset scroll lock
   }, [originalPreview]);
 
   return (

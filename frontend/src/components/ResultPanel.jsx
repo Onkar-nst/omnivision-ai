@@ -63,9 +63,9 @@ function ResultPanel({ result, originalPreview, onReset }) {
       {/* ── Detections List ── */}
       {detections.length > 0 ? (
         <div>
-          <div className="detections-header" style={{ marginTop: '20px', borderTop: '1px solid var(--border)', paddingTop: '20px' }}>
-            <h2 className="detections-title" style={{ fontSize: '22px', margin: 0 }}>🔍 Objects Identified</h2>
-            <span className="detections-count" style={{ fontSize: '14px', background: '#e5e7eb', padding: '5px 12px', borderRadius: '20px' }}>
+          <div className="detections-header" style={{ marginTop: '15px', borderTop: '1px solid var(--border)', paddingTop: '15px' }}>
+            <h2 className="detections-title" style={{ fontSize: '18px', margin: 0 }}>🔍 Objects Identified</h2>
+            <span className="detections-count" style={{ fontSize: '12px', background: '#f3f4f6', padding: '4px 10px', borderRadius: '20px' }}>
               {total_objects} found
             </span>
           </div>
