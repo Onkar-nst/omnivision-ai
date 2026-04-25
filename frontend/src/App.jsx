@@ -6,7 +6,7 @@ import LiveCamera from './components/LiveCamera';
 import logoUrl from './assets/logo.png';
 import './index.css';
 
-const API_URL = 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const STATE = {
   IDLE:       'idle',

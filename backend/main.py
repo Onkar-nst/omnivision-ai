@@ -61,12 +61,14 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",   # Vite dev server
-        "http://localhost:3000",   # CRA dev server (just in case)
+        "http://localhost:5173",         # Vite dev server
+        "http://localhost:3000",         # CRA dev server
+        "https://*.vercel.app",          # Vercel deployments (wildcard)
     ],
+    allow_origin_regex=r"https://.*\.vercel\.app",  # regex fallback for older FastAPI
     allow_credentials=True,
-    allow_methods=["*"],          # Allow GET, POST, PUT, DELETE, etc.
-    allow_headers=["*"],          # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Ensure the uploads directory exists
