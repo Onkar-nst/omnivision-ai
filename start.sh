@@ -1,12 +1,12 @@
 #!/bin/bash
 # ──────────────────────────────────────────────
-# WhoMi Startup Script
+# Ommni Vision Startup Script
 # Starts both backend (FastAPI) and frontend (Vite) servers
 # Usage: bash start.sh
 # ──────────────────────────────────────────────
 
 echo ""
-echo "🚀 Starting WhoMi — AI Object Detection System"
+echo "🚀 Starting Ommni Vision — AI Object Detection System"
 echo "────────────────────────────────────────────"
 
 # Kill any leftover processes on our ports

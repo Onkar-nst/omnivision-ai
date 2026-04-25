@@ -3,6 +3,7 @@ import UploadZone from './components/UploadZone';
 import LoadingView from './components/LoadingView';
 import ResultPanel from './components/ResultPanel';
 import LiveCamera from './components/LiveCamera'; 
+import logoUrl from './assets/logo.png';
 import './index.css';
 
 const API_URL = 'http://localhost:8000';
@@ -92,9 +93,9 @@ function App() {
         <div className="container">
           <div className="header-inner">
             <div className="logo">
-              <div className="logo-icon">👁️</div>
+              <img src={logoUrl} alt="Ommni Vision Logo" style={{ height: '40px', width: 'auto', borderRadius: '10px' }} />
               <div>
-                <div className="logo-text">WhoMi</div>
+                <div className="logo-text">Ommni Vision</div>
                 <div className="logo-tagline">AI Humanoid Vision</div>
               </div>
             </div>
@@ -182,7 +183,7 @@ function App() {
 
       <footer className="footer">
         <div className="container">
-          Built with <span>YOLOv8</span> · <span>FastAPI</span> · <span>React</span> — WhoMi AI
+          Built with <span>YOLOv8</span> · <span>FastAPI</span> · <span>React</span> — Ommni Vision
         </div>
       </footer>
     </div>

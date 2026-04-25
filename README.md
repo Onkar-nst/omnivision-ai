@@ -1,4 +1,4 @@
-# 🔍 WhoMi — AI Object Detection System
+# 🔍 Ommni Vision — AI Object Detection System
 
 > **"Tell me what's in this image"** — An intelligent, humanoid image analysis system powered by YOLOv8
 
@@ -6,7 +6,7 @@
 
 ## 🧠 What This Project Does
 
-WhoMi is an AI-powered object detection system that:
+Ommni Vision is an AI-powered object detection system that:
 - Accepts an uploaded image from the user
 - Runs it through a pretrained YOLOv8 neural network
 - Detects all objects, draws bounding boxes, shows confidence scores
@@ -17,7 +17,7 @@ WhoMi is an AI-powered object detection system that:
 ## 📁 Project Structure
 
 ```
-WhoMi/
+OmniVision/
 ├── backend/                    # Python FastAPI backend
 │   ├── main.py                 # API server entry point
 │   ├── detector.py             # YOLOv8 detection logic
