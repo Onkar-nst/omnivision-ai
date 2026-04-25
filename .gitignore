@@ -1,0 +1,23 @@
+# Python
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/uploads/
+*.egg-info/
+.DS_Store
+
+# Node.js
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# YOLOv8 downloaded model weights (auto-downloaded on first run)
+*.pt
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/

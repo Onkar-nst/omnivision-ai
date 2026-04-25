@@ -1,0 +1,18 @@
+# AI/ML & Face Analysis
+ultralytics>=8.3.0
+torch>=2.0.0
+deepface>=0.0.92            # For Emotion Detection
+tf-keras                     # Required by DeepFace backend
+
+# Image processing
+opencv-python>=4.8.0
+Pillow>=10.4.0
+
+# Backend server
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9
+
+# Utilities
+numpy>=1.26.0
+python-dotenv>=1.0.0
