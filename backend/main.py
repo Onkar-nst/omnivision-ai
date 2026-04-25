@@ -18,9 +18,26 @@ from pathlib import Path
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from typing import List, Any
+from groq import Groq
 
 # Import our detection engine (detector.py)
 from detector import detect_objects
+
+# ─────────────────────────────────────────────
+# GROQ CLIENT
+# ─────────────────────────────────────────────
+from dotenv import load_dotenv
+load_dotenv()  # loads backend/.env automatically
+
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+if not GROQ_API_KEY:
+    print("⚠️  WARNING: GROQ_API_KEY not set. Summaries will be unavailable.")
+groq_client = Groq(api_key=GROQ_API_KEY)
+
+class SummarizeRequest(BaseModel):
+    detections: List[Any] = []
 
 # ─────────────────────────────────────────────
 # APP INITIALIZATION
@@ -154,3 +171,51 @@ def get_supported_classes():
         "total": len(model.names),
         "classes": list(model.names.values())
     }
+
+
+@app.post("/summarize")
+async def summarize_objects(body: SummarizeRequest):
+    """
+    Takes detected objects and uses Groq (llama-3.1-8b-instant)
+    to generate a 3-bullet point AI summary of the scene.
+    """
+    detections = body.detections
+    if not detections:
+        return {"summary_points": ["No objects detected in the image."]}
+
+    # Count objects per class
+    counts: dict = {}
+    for det in detections:
+        cls = det.get("class", "unknown")
+        counts[cls] = counts.get(cls, 0) + 1
+
+    object_list = ", ".join(
+        f"{v} {k}{'s' if v > 1 else ''}" for k, v in counts.items()
+    )
+
+    prompt = (
+        f"An AI vision system detected the following objects in an image: {object_list}.\n"
+        "Write exactly 3 short bullet points (each max 18 words) that summarize what the scene likely shows. "
+        "Be specific and insightful. Return ONLY the 3 lines, each starting with a bullet '•'."
+    )
+
+    try:
+        response = groq_client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=200,
+            temperature=0.7,
+        )
+        text = response.choices[0].message.content or ""
+        points = [
+            line.strip().lstrip("•").strip()
+            for line in text.strip().split("\n")
+            if line.strip() and "•" in line
+        ][:3]
+        if not points:
+            # fallback: split by newline
+            points = [l.strip() for l in text.strip().split("\n") if l.strip()][:3]
+    except Exception as e:
+        points = [f"Scene contains: {object_list}.", "AI summary unavailable.", str(e)[:80]]
+
+    return {"summary_points": points}

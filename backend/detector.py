@@ -59,6 +59,7 @@ def detect_objects(image_bytes: bytes, confidence_threshold: float = 0.4) -> dic
         "detections": detections,
         "total_objects": len(detections),
         "summary": _generate_summary(detections),
+        "image_size": {"width": img_w, "height": img_h},
     }
 
 def _analyze_expression(image, x1, y1, x2, y2):
@@ -86,7 +87,7 @@ def _draw_boxes(image, detections):
         label += f" {det['confidence_percent']}"
         
         # Very Small Elegant Font
-        font_scale = 0.35
+        font_scale = 0.28
         thickness = 1
         (tw, th), bl = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, font_scale, thickness)
         
