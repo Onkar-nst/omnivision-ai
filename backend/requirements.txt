@@ -1,18 +1,16 @@
-# ── Core AI / Computer Vision ──────────────────────────────
-# CPU-only PyTorch — Render has no GPU.
-# The --extra-index-url is set in pip.conf so pip picks the right wheel.
-torch==2.2.2
-torchvision==0.17.2
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.2.2
+torchvision>=0.17.2
 
 # YOLOv8 — pins ultralytics to a version known-good on Py 3.11 + CPU torch
-ultralytics==8.3.0
+ultralytics>=8.3.0
 
 # OpenCV headless (no GUI dependencies — required on server environments)
 opencv-python-headless>=4.8.0
 
 # Image processing
 Pillow>=10.4.0
-numpy>=1.26.0,<2.0.0        # numpy 2.x breaks several CV packages
+numpy>=1.26.0
 
 # ── Backend framework ───────────────────────────────────────
 fastapi>=0.111.0
