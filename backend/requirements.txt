@@ -1,21 +1,27 @@
-# AI/ML & Face Analysis
-ultralytics>=8.3.0
-torch>=2.0.0
-deepface>=0.0.92            # For Emotion Detection
-tf-keras                     # Required by DeepFace backend
+# ── Core AI / Computer Vision ──────────────────────────────
+# CPU-only PyTorch — Render has no GPU.
+# The --extra-index-url is set in pip.conf so pip picks the right wheel.
+torch==2.2.2
+torchvision==0.17.2
+
+# YOLOv8 — pins ultralytics to a version known-good on Py 3.11 + CPU torch
+ultralytics==8.3.0
+
+# OpenCV headless (no GUI dependencies — required on server environments)
+opencv-python-headless>=4.8.0
 
 # Image processing
-opencv-python>=4.8.0
 Pillow>=10.4.0
+numpy>=1.26.0,<2.0.0        # numpy 2.x breaks several CV packages
 
-# Backend server
+# ── Backend framework ───────────────────────────────────────
 fastapi>=0.111.0
 uvicorn[standard]>=0.29.0
-python-multipart>=0.0.9
+python-multipart>=0.0.9      # needed for File upload parsing
 
-# Utilities
-numpy>=1.26.0
-python-dotenv>=1.0.0
-
-# AI Summary
+# ── Groq AI summary ────────────────────────────────────────
 groq>=0.9.0
+
+# ── Utilities ──────────────────────────────────────────────
+python-dotenv>=1.0.0
+pydantic>=2.0.0
