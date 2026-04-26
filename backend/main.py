@@ -61,11 +61,12 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",         # Vite dev server
-        "http://localhost:3000",         # CRA dev server
-        "https://*.vercel.app",          # Vercel deployments (wildcard)
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://omnivision-ai.vercel.app",
+        "https://ommni-vision-frontend.vercel.app",
     ],
-    allow_origin_regex=r"https://.*\.vercel\.app",  # regex fallback for older FastAPI
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

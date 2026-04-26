@@ -7,6 +7,7 @@ import logoUrl from './assets/logo.png';
 import './index.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+console.log('🔗 Ommni Vision API URL:', API_URL);
 
 const STATE = {
   IDLE:       'idle',
