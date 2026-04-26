@@ -60,13 +60,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "https://omnivision-ai.vercel.app",
-        "https://ommni-vision-frontend.vercel.app",
-    ],
-    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -102,6 +96,8 @@ async def detect(
     file: UploadFile = File(...),
     confidence: float = 0.4
 ):
+    print(f"📥 Received detection request for: {file.filename} (confidence: {confidence})")
+
     """
     Main detection endpoint.
     
